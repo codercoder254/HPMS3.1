@@ -1,4 +1,4 @@
-//@a.d.a.n_noa&June😇
+//@a.d.a.n_noa😇
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -295,7 +295,21 @@ int main(void)
 
             case 3:
                 if(head != NULL)
-                    check_vitals(head);
+                {
+                    int check = check_vitals(head);
+                    if(check == 0)
+                    {
+                        printf("Normal.\n");
+                    }
+                    else if(check == 1)
+                    {
+                        printf("Warning.\n");
+                    }
+                    else
+                    {
+                        printf("Emergency.\n");
+                    }
+                }
                 else
                     printf("No patient to check!\n");
                 break;
