@@ -1,0 +1,17 @@
+//ignore
+*.exe
+*.o
+*.out
+
+//ignore build directory
+build/
+bin/
+obj/
+
+//ignore temporary files
+*.tmp
+*.log
+*.bak
+
+//ignore vscode settings
+.vscode/

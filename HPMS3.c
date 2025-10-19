@@ -4,6 +4,16 @@
 #include <string.h>
 #include <ctype.h>
 
+#define TEMP_MIN 36.1
+#define TEMP_MAX 37.2
+#define SYSTOLICBP_MIN 90
+#define SYSTOLICBP_MAX 120
+#define DIASTOLICBP_MIN 60
+#define DIASTOLICBP_MAX 80
+#define HEARTRATE_MIN 60
+#define HEARTRATE_MAX 100
+
+
 typedef struct{
     float temperature;
     int systolicBP;
@@ -25,6 +35,26 @@ typedef struct Patient{
     Status status;
     struct Patient *next;
 }Patient;
+
+//function to search patient in other functions which need it
+Patient* search_patient(Patient *head)
+{
+    printf("Enter patient name: ");
+    char name[50];
+    fgets(name, sizeof(name), stdin);
+    name[strcspn(name, "\n")] = '\0';
+
+    Patient *temp = head;
+    while( temp != NULL)
+    {
+        if(strcmp(temp -> name, name) == 0)
+        {
+            return temp;
+        }
+        temp = temp -> next;
+    }
+    return NULL;
+}
 
 //add patient to linked list
 void add_patient(Patient **head, Patient *newP)
@@ -105,13 +135,18 @@ Patient *create_Patient(void)
 }
 
 
-int check_vitals(Patient *temp_p)
+int check_vitals(Patient *head)
 {
-    Patient *temp_patient = temp_p;
-    printf("Checking  vitals...\n");
+    Patient *temp_patient = search_patient(head);
+    if (temp_patient == NULL)
+    {
+        perror("Patient not found!\n");
+        return -1;
+    }
+    printf("Checking  vitals for %s\n", temp_patient->name);
     int check_array[5];
     //Temperature
-    if(temp_patient->vitals.temperature >= 36.1 && temp_patient->vitals.temperature <= 37.2)
+    if(temp_patient->vitals.temperature >= TEMP_MIN && temp_patient->vitals.temperature <= TEMP_MAX)
     {
         check_array[0] = 0;
     }
@@ -120,7 +155,7 @@ int check_vitals(Patient *temp_p)
         check_array[0] = 1;
     }
     //Systolic BP
-    if(temp_patient->vitals.systolicBP >= 90 && temp_patient->vitals.systolicBP <= 120)
+    if(temp_patient->vitals.systolicBP >= SYSTOLICBP_MIN && temp_patient->vitals.systolicBP <= SYSTOLICBP_MAX)
     {
         check_array[1] = 0;
     }
@@ -129,7 +164,7 @@ int check_vitals(Patient *temp_p)
         check_array[1] = 1;
     }
     //DiastolicBP
-    if(temp_patient->vitals.diastolicBP >= 60 && temp_patient->vitals.diastolicBP <= 80)
+    if(temp_patient->vitals.diastolicBP >= DIASTOLICBP_MIN && temp_patient->vitals.diastolicBP <= DIASTOLICBP_MAX)
     {
         check_array[2] = 0;
     }
@@ -138,7 +173,7 @@ int check_vitals(Patient *temp_p)
         check_array[2] = 1;
     }
     //Heartrate
-    if(temp_patient->vitals.heartRate >= 60 && temp_patient->vitals.heartRate <= 100)
+    if(temp_patient->vitals.heartRate >= HEARTRATE_MIN && temp_patient->vitals.heartRate <= HEARTRATE_MAX)
     {
         check_array[3] = 0;
     }
@@ -167,9 +202,14 @@ int check_vitals(Patient *temp_p)
 }
 
 
-Patient* update_vitals(Patient *temp_p)
+Patient* update_vitals(Patient *head)
 {
-    Patient *temp_patient = temp_p;
+    Patient *temp_patient = search_patient(head);
+    if (temp_patient == NULL)
+    {
+        perror("Patient not found!\n");
+        return NULL;
+    }
     printf("Updating vitals...\n");
     while(1)
     {
@@ -278,7 +318,7 @@ int main(void)
         printf("5. Exit\n");
         printf("Enter choice: ");
         scanf("%d",&choice);
-        getchar();
+        while (getchar() != '\n');  // clear newline from input buffer
 
         switch(choice)
         {
@@ -299,15 +339,15 @@ int main(void)
                     int check = check_vitals(head);
                     if(check == 0)
                     {
-                        printf("Normal.\n");
+                        printf("All vitals normal.\n");
                     }
                     else if(check == 1)
                     {
-                        printf("Warning.\n");
+                        printf("Warning: one vital sign is outside normal range.\n");
                     }
                     else
                     {
-                        printf("Emergency.\n");
+                        printf("Emergency: multiple vital signs are outside normal range.\n");
                     }
                 }
                 else
