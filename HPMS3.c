@@ -283,7 +283,12 @@ Patient* update_vitals(Patient *head)
 
 void print_patient(Patient *temp_p)
 {
-    Patient *temp_patient = temp_p;
+    Patient *temp_patient = search_patient(temp_p);
+    if (temp_patient == NULL)
+    {
+        perror("Patient not found!\n");
+        return;
+    }
     printf("Patient: %s\n",temp_patient->name);
     printf("ID: %llu\n",temp_patient->ID);
     printf("Age: %d\n",temp_patient->age);
@@ -301,16 +306,25 @@ void viewAllpatients(Patient *head)
 {
     if (head == NULL)
     {
-        printf("No patients available.\n");
+        printf("No patients to view.\n");
         return;
     }
 
-    Patient *temp = head;
-    while (temp != NULL)
+    Patient *temp_patient = head;
+    while (temp_patient != NULL)
     {
-        print_patient(temp);
+        printf("Patient: %s\n",temp_patient->name);
+    printf("ID: %llu\n",temp_patient->ID);
+    printf("Age: %d\n",temp_patient->age);
+    printf("Body temperature: %.2f\nSystolicBP: %d\nDiastolicBP: %d\nHeartRate: %d\n",
+        temp_patient->vitals.temperature,
+        temp_patient->vitals.systolicBP,
+        temp_patient->vitals.diastolicBP,
+        temp_patient->vitals.heartRate);
+    printf("Status code: %d\n",temp_patient->status.stateCode);
+    printf("Status text: %s\n",temp_patient->status.statetext);
         printf("------------------------------------\n");
-        temp = temp->next;
+        temp_patient = temp_patient->next;
     }
 }
 
@@ -324,9 +338,10 @@ int main(void)
         printf("\n=== Hospital Management Menu ===\n");
         printf("1. Add Patient\n");
         printf("2. View All Patients\n");
-        printf("3. Check Vitals\n");
-        printf("4. Update Vitals\n");
-        printf("5. Exit\n");
+        printf("3. View a Patient's Details\n");
+        printf("4. Check Vitals\n");
+        printf("5. Update Vitals\n");
+        printf("6. Exit\n");
         printf("Enter choice: ");
         scanf("%d",&choice);
         while (getchar() != '\n');  // clear newline from input buffer
@@ -345,6 +360,13 @@ int main(void)
                 break;
 
             case 3:
+                if(head != NULL)
+                    print_patient(head);
+                else
+                    printf("No patient to view!\n");
+                break;
+
+            case 4:
                 if(head != NULL)
                 {
                     int check = check_vitals(head);
@@ -365,14 +387,14 @@ int main(void)
                     printf("No patient to check!\n");
                 break;
 
-            case 4:
+            case 5:
                 if(head != NULL)
                     update_vitals(head);
                 else
                     printf("No patient to update!\n");
                 break;
 
-            case 5:
+            case 6:
                 printf("Exiting program...\n");
                 printf("Made by Adan\n");
                 return 0;
