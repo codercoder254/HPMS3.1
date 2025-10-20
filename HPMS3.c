@@ -41,13 +41,24 @@ Patient* search_patient(Patient *head)
 {
     printf("Enter patient name: ");
     char name[50];
+    char sname[50];
     fgets(name, sizeof(name), stdin);
     name[strcspn(name, "\n")] = '\0';
+
+    for(int i = 0; name[i] != '\0'; i++)
+    {
+        sname[i] = tolower(name[i]);
+    }
 
     Patient *temp = head;
     while( temp != NULL)
     {
-        if(strcmp(temp -> name, name) == 0)
+        char temp_name[50];
+        for(int i = 0; temp -> name[i] != '\0'; i++)
+        {
+            temp_name[i] = tolower(temp -> name[i]);
+        }
+        if(strcmp(temp_name, sname) == 0)
         {
             return temp;
         }
